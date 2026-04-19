@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Nutrition & Deficiency Dashboard</title>
+    <meta name="description"
+        content="Track your nutrition, discover missing nutrients, and plan your diet with our smart dashboard.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2><span>Mr. Sam's</span> Nutrition Corner</h2>
+            </div>
+            <nav>
+                <button class="nav-item active" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="nav-item" onclick="switchTab('planner')">Weekly Planner</button>
+                <button class="nav-item" onclick="switchTab('profile')">User Profile</button>
+            </nav>
+            <div class="user-info">
+                <div class="avatar">U</div>
+                <span id="sidebarUserName">User Profile</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div style="flex:1; position: relative;">
+                    <div class="search-container">
+                        <input type="text" id="foodInput" placeholder="Enter food (e.g., 2 eggs, banana, chicken...)">
+                        <button id="searchBtn">Analyze</button>
+                        <button id="filterBtn" class="btn-secondary"
+                            style="margin-left: 0.5rem; background: var(--sidebar-bg); border: 1px solid var(--card-border);">Browse</button>
+                    </div>
+                    <!-- Filter Dropdown -->
+                    <div id="filterDropdown" class="filter-dropdown" style="display: none;">
+                        <h4>Fetch Foods By Category</h4>
+                        <div class="filter-options">
+                            <button onclick="fetchMockFoods('high protein')">High Protein</button>
+                            <button onclick="fetchMockFoods('low carb')">Low Carb</button>
+                            <button onclick="fetchMockFoods('low fat')">Low Fat</button>
+                            <button onclick="fetchMockFoods('veg')">Veg</button>
+                            <button onclick="fetchMockFoods('non-veg')">Non-Veg</button>
+                            <button onclick="fetchMockFoods('diabetic-friendly')">Diabetic Friendly</button>
+                            <button onclick="fetchMockFoods('allergy-friendly')">Allergy Friendly (Nut/Dairy
+                                Free)</button>
+                            <button onclick="fetchMockFoods('high iron')">High Iron</button>
+                            <button onclick="fetchMockFoods('high fiber')">High Fiber</button>
+                            <button onclick="fetchMockFoods('high calcium')">High Calcium</button>
+                            <button onclick="fetchMockFoods('high vitamin c')">High Vitamin C</button>
+                            <button onclick="fetchMockFoods('high vitamin d')">High Vitamin D</button>
+                        </div>
+                    </div>
+                    <!-- Filter Results List -->
+                    <div id="filterResults" class="filter-results" style="display: none;">
+                        <!-- Populate via JS -->
+                    </div>
+                </div>
+                <div class="header-status" id="headerStatus">Ready to analyze food</div>
+            </header>
+
+            <div id="dashboardSection" class="section active">
+                <div class="dashboard-grid">
+                    <!-- Top: Current Food Summary -->
+                    <div class="card summary-card">
+                        <h3>Food Info</h3>
+                        <div id="foodSummary" class="food-summary">
+                            <p class="placeholder-text">Search for a food item to see its total calories and weight.</p>
+                        </div>
+                    </div>
+
+                    <!-- Left Bottom: Present Nutrients -->
+                    <div class="card present-card">
+                        <h3>Nutrients Present</h3>
+                        <p class="subtext">Sufficient amounts based on standard Daily Value (&ge; 10%)</p>
+                        <div id="presentGrid" class="nutrient-grid">
+                            <p class="placeholder-text">No data yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right side: Deficiencies & Suggestions -->
+                    <div class="card missing-card">
+                        <h3>Nutrients Missing</h3>
+                        <p class="subtext">Below 10% Daily Value - Add these to your diet to cover deficiencies!</p>
+                        <div id="missingGrid" class="missing-grid">
+                            <p class="placeholder-text">No data yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Planner Section -->
+            <div id="plannerSection" class="section">
+                <div class="card planner-card">
+                    <h3>Weekly Diet Planner</h3>
+                    <p class="subtext">Add analyzed foods to your daily plan to track cumulative multi-day nutrient
+                        fulfillment.</p>
+
+                    <div class="add-to-plan-wrapper">
+                        <select id="daySelect">
+                            <option value="Entire Week">Entire Week</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                        <button id="addToPlanBtn" class="btn-secondary" disabled>Add Analyzed Food to Plan</button>
+                    </div>
+
+                    <div class="auto-plan-wrapper card"
+                        style="margin-bottom: 2rem; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
+                        <h4 style="margin-bottom:0.5rem; color: var(--accent-blue);">Auto-Fill Planner</h4>
+                        <p class="subtext" style="margin-bottom:1rem;">Automatically generate meals based on your Custom
+                            Profile recommendations and selected preferences.</p>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <select id="autoPlanDaySelect"
+                                style="padding: 0.6rem; border-radius: 6px; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--card-border);">
+                                <option value="Entire Week">Entire Week</option>
+                                <option value="Monday">Monday Only</option>
+                                <option value="Tuesday">Tuesday Only</option>
+                                <option value="Wednesday">Wednesday Only</option>
+                                <option value="Thursday">Thursday Only</option>
+                                <option value="Friday">Friday Only</option>
+                                <option value="Saturday">Saturday Only</option>
+                                <option value="Sunday">Sunday Only</option>
+                            </select>
+                            <select id="autoPlanPrefSelect"
+                                style="padding: 0.6rem; border-radius: 6px; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--card-border);">
+                                <option value="standard">Standard Balanced</option>
+                                <option value="veg">Vegetarian</option>
+                                <option value="diabetic-friendly">Diabetic Friendly</option>
+                                <option value="allergy-friendly">Allergy Friendly</option>
+                                <option value="high protein">High Protein</option>
+                            </select>
+                            <button id="autoSetPlanBtn" class="btn-secondary"
+                                style="background-color: var(--accent-green);">Auto Set Plan according to
+                                Recommendation</button>
+                        </div>
+                    </div>
+
+                    <div class="weekly-grid">
+                        <!-- Days will be generated by JS -->
+                    </div>
+
+                    <div class="weekly-summary card">
+                        <h4>Weekly Tracker Assessment</h4>
+                        <div id="weeklyAssessment">
+                            <p class="placeholder-text">Add items to your planner to see your cumulative nutrient
+                                coverage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile Section -->
+            <div id="profileSection" class="section">
+                <div class="card planner-card" style="max-width: 600px; margin: 0 auto;">
+                    <h3>Your Physiological Profile</h3>
+                    <p class="subtext">Configure your height, weight, and age to accurately tailor Daily Value
+                        estimations for your body, rather than generic 2000 kcal diets.</p>
+
+                    <div class="profile-form">
+                        <div class="form-group">
+                            <label>Age (years):</label>
+                            <input type="number" id="profileAge" placeholder="e.g., 25" value="25">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label>
+                            <select id="profileGender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Weight (kg):</label>
+                            <input type="number" id="profileWeight" placeholder="e.g., 70" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label>Height (cm):</label>
+                            <input type="number" id="profileHeight" placeholder="e.g., 175" value="175">
+                        </div>
+                        <div class="form-group">
+                            <label>Dietary Base Preference:</label>
+                            <select id="profileDiet">
+                                <option value="standard">Standard/No Restriction</option>
+                                <option value="veg">Vegetarian</option>
+                                <option value="diabetic-friendly">Diabetic Friendly</option>
+                            </select>
+                        </div>
+
+                        <button id="saveProfileBtn" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Save
+                            Profile & Recalculate DVs</button>
+                    </div>
+
+                    <div id="bmrResult"
+                        style="margin-top: 2rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--accent-green); border-radius: 4px; display: none;">
+                        <h4 style="color: var(--accent-green);">Profile Active</h4>
+                        <p style="font-size: 0.95rem; margin-top: 0.5rem;" id="bmrText"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="food_db.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
